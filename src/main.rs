@@ -32,7 +32,7 @@ use hyper::{Method, StatusCode};
 #[tokio::main]
 async fn main() {
     // We'll bind to 127.0.0.1:3000
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3001));
+    let addr = SocketAddr::from(([127, 0, 0, 1], 3002));
 
     // A `Service` is needed for every connection, so this
     // creates one from our `hello_world` function.
@@ -58,10 +58,11 @@ match (req.method(), req.uri().path()) {
         *response.body_mut() = Body::from("Try POSTing data to /echo");
     },
     (&Method::POST, "/echo") => {
-        // we'll be back
+        *response.body_mut() = req.into_body();
     },
     _ => {
         *response.status_mut() = StatusCode::NOT_FOUND;
+        *response.body_mut() = Body::from("Requested resource not found at this endpoint")
     },
 };
 
